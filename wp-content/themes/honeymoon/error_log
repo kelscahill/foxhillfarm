@@ -1,0 +1,4 @@
+[07-Aug-2016 11:18:38 America/Denver] PHP Fatal error:  Call to undefined function language_attributes() in /home8/foxhillf/public_html/wp-content/themes/honeymoon/header.php on line 10
+[07-Aug-2016 11:18:40 America/Denver] PHP Fatal error:  Call to undefined function is_page_template() in /home8/foxhillf/public_html/wp-content/themes/honeymoon/footer.php on line 17
+[16-Mar-2017 12:44:17 America/Denver] PHP Fatal error:  Call to undefined function get_header() in /home8/foxhillf/public_html/wp-content/themes/honeymoon/404.php on line 9
+[23-Mar-2017 08:32:49 America/Denver] PHP Fatal error:  Call to undefined function get_header() in /home8/foxhillf/public_html/wp-content/themes/honeymoon/404.php on line 9
