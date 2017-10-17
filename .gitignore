@@ -1,3 +1,12 @@
+*~
+.DS_Store
+.svn
+.cvs
+*.bak
+*.swp
+Thumbs.db
+
+# WordPress Specific
 *.log
 wp-config.php
 wp-content/advanced-cache.php
@@ -10,9 +19,7 @@ wp-content/uploads/
 wp-content/wp-cache-config.php
 wp-content/plugins/hello.php
 
-/.htaccess
 /license.txt
 /readme.html
 /sitemap.xml
 /sitemap.xml.gz
-
