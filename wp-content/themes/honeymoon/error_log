@@ -1,0 +1,5 @@
+[05-Feb-2018 14:32:39 America/Denver] PHP Fatal error:  Call to undefined function __() in /home8/foxhillf/public_html/wp-content/themes/honeymoon/search.php on line 9
+[05-Feb-2018 14:32:40 America/Denver] PHP Fatal error:  Call to undefined function __() in /home8/foxhillf/public_html/wp-content/themes/honeymoon/search.php on line 9
+[24-Mar-2018 03:30:11 America/Denver] PHP Fatal error:  Call to undefined function get_the_archive_title() in /home8/foxhillf/public_html/wp-content/themes/honeymoon/archive.php on line 11
+[24-Mar-2018 03:30:11 America/Denver] PHP Fatal error:  Call to undefined function get_the_archive_title() in /home8/foxhillf/public_html/wp-content/themes/honeymoon/archive.php on line 11
+[25-Mar-2018 05:16:09 America/Denver] PHP Fatal error:  Call to undefined function language_attributes() in /home8/foxhillf/public_html/wp-content/themes/honeymoon/header.php on line 10
