@@ -2,7 +2,7 @@
 
 /*
 Module Name:Image Gallery Carousel Without Jetpack
-Plugin URL: http://themepacific.com/
+Plugin URL: https://themepacific.com/
 Description: Transform your standard image galleries into an immersive full-screen experience.
 Version: 0.1
 Author: Raja CRN
@@ -26,7 +26,36 @@ class themepacific_Jetpack_Carousel {
 	var $in_jetpack = true;
 
 	function __construct() {
+
 		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ),99 );
+
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+	}
+	public	function admin_menu() 
+	{
+		$icon_url = plugins_url( '/images/favicon.png', __FILE__ );
+		
+		$page_hook = add_menu_page( __( ' Tiled Gallery Carousel Without JetPack', 'themepacific_Jetpack'), 'TP Tiled Gallery', 'update_core', 'themepacific_jp_gallery', array(&$this, 'settings_page'), $icon_url );
+		
+		add_submenu_page( 'themepacific_jp_gallery', __( 'Settings', 'themepacific_Jetpack' ), __( ' Tiled Gallery Carousel Without JetPack Settings', 'themepacific_Jetpack' ), 'update_core', 'themepacific_jp_gallery', array(&$this, 'settings_page') );
+
+
+	}
+	function themepacific_gallery_enqueue_about_page_scripts($hook) {
+
+		/*if ( 'themepacific_jp_gallery' != $hook ) {
+			return;
+		}
+*/
+	// enqueue CSS
+		wp_enqueue_style( 'tpjp-settings-css',  plugins_url( 'themepacific_gallery_settings.css', __FILE__ ) );
+
+	}
+	public function admin_init()
+	{		 $this->register_settings();
+
+		
 	}
 
 	function init() {
@@ -37,7 +66,9 @@ class themepacific_Jetpack_Carousel {
 
 		if ( is_admin() ) {
 			// Register the Carousel-related related settings
-			add_action( 'admin_init', array( $this, 'register_settings' ), 5 );
+
+			add_action( 'admin_enqueue_scripts', array( $this, 'themepacific_gallery_enqueue_about_page_scripts' ) );
+
 			if ( ! $this->in_jetpack ) {
 				if ( 0 == $this->test_1or0_option( get_option( 'carousel_enable_it' ), true ) )
 					return; // Carousel disabled, abort early, but still register setting so user can switch it back on
@@ -107,12 +138,18 @@ class themepacific_Jetpack_Carousel {
 				'ajaxurl'              => admin_url( 'admin-ajax.php', is_ssl() ? 'https' : 'http' ),
 				'nonce'                => wp_create_nonce( 'carousel_nonce' ),
 				'display_exif'         => $this->test_1or0_option( get_option( 'carousel_display_exif' ), true ),
-				'display_geo'          => $this->test_1or0_option( get_option( 'carousel_display_geo' ), true ),
+				
+				'display_geo'          => $this->test_1or0_option( get_option( 'carousel_display_geo' ), true ),				
+				'display_comments'          => $this->test_1or0_option( get_option( 'comments_display' ), true ),
+				'fullsize_display'          => $this->test_1or0_option( get_option( 'fullsize_display' ), true ),
+
 				'background_color'     => $this->carousel_background_color_sanitize( get_option( 'carousel_background_color' ) ),
 				'comment'              => __( 'Comment', 'themepacific_gallery' ),
 				'post_comment'         => __( 'Post Comment', 'themepacific_gallery' ),
 				'loading_comments'     => __( 'Loading Comments...', 'themepacific_gallery' ),
+
 				'download_original'    => sprintf( __( 'View full size <span class="photo-size">%1$s<span class="photo-size-times">&times;</span>%2$s</span>', 'themepacific_gallery' ), '{0}', '{1}' ),
+
 				'no_comment_text'      => __( 'Please be sure to submit some text with your comment.', 'themepacific_gallery' ),
 				'no_comment_email'     => __( 'Please provide an email address to comment.', 'themepacific_gallery' ),
 				'no_comment_author'    => __( 'Please provide your name to comment.', 'themepacific_gallery' ),
@@ -130,22 +167,30 @@ class themepacific_Jetpack_Carousel {
 
 			if ( ! isset( $localize_strings['jetpack_comments_iframe_src'] ) || empty( $localize_strings['jetpack_comments_iframe_src'] ) ) {
 				// We're not using Jetpack comments after all, so fallback to standard local comments.
+				if ( isset( $localize_strings['display_comments'] )){
+					if ($localize_strings['display_comments']) {
 
-				if ( $is_logged_in ) {
-					$localize_strings['local_comments_commenting_as'] = '<p id="jp-carousel-commenting-as">' . sprintf( __( 'Commenting as %s', 'themepacific_gallery' ), $current_user->data->display_name ) . '</p>';
-				} else {
-					if ( $comment_registration ) {
-						$localize_strings['local_comments_commenting_as'] = '<p id="jp-carousel-commenting-as">' . __( 'You must be <a href="#" class="jp-carousel-comment-login">logged in</a> to post a comment.', 'themepacific_gallery' ) . '</p>';
-					} else {
-						$required = ( $require_name_email ) ? __( '%s (Required)', 'themepacific_gallery' ) : '%s';
-						$localize_strings['local_comments_commenting_as'] = ''
-							. '<fieldset><label for="email">' . sprintf( $required, __( 'Email', 'themepacific_gallery' ) ) . '</label> '
-							. '<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field" /></fieldset>'
-							. '<fieldset><label for="author">' . sprintf( $required, __( 'Name', 'themepacific_gallery' ) ) . '</label> '
-							. '<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field" /></fieldset>'
-							. '<fieldset><label for="url">' . __( 'Website', 'themepacific_gallery' ) . '</label> '
-							. '<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field" /></fieldset>';
+
+						if ( $is_logged_in ) {
+							$localize_strings['local_comments_commenting_as'] = '<p id="jp-carousel-commenting-as">' . sprintf( __( 'Commenting as %s', 'themepacific_gallery' ), $current_user->data->display_name ) . '</p>';
+						} else {
+							if ( $comment_registration ) {
+								$localize_strings['local_comments_commenting_as'] = '<p id="jp-carousel-commenting-as">' . __( 'You must be <a href="#" class="jp-carousel-comment-login">logged in</a> to post a comment.', 'themepacific_gallery' ) . '</p>';
+							} else {
+								$required = ( $require_name_email ) ? __( '%s (Required)', 'themepacific_gallery' ) : '%s';
+								$localize_strings['local_comments_commenting_as'] = ''
+								. '<fieldset><label for="email">' . sprintf( $required, __( 'Email', 'themepacific_gallery' ) ) . '</label> '
+								. '<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field" /></fieldset>'
+								. '<fieldset><label for="author">' . sprintf( $required, __( 'Name', 'themepacific_gallery' ) ) . '</label> '
+								. '<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field" /></fieldset>'
+								. '<fieldset><label for="url">' . __( 'Website', 'themepacific_gallery' ) . '</label> '
+								. '<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field" /></fieldset>';
+							}
 						}
+					}else{
+						$localize_strings['loading_comments'] = '';
+						$localize_strings['comment'] = '';
+					}
 				}
 			}
 
@@ -170,7 +215,7 @@ class themepacific_Jetpack_Carousel {
 
 	function add_data_to_images( $html, $attachment_id ) {
 		if ( $this->first_run ) // not in a gallery
-			return $html;
+		return $html;
 
 		$attachment_id   = intval( $attachment_id );
 		$orig_file       = wp_get_attachment_image_src( $attachment_id, 'full' );
@@ -254,8 +299,8 @@ class themepacific_Jetpack_Carousel {
 					'blog_id' => $blog_id,
 					'permalink' => get_permalink( $post->ID ),
 					//'likes_blog_id' => $likes_blog_id
-					)
-				);
+				)
+			);
 
 			$extra_data = apply_filters( 'jp_carousel_add_data_to_container', $extra_data );
 			foreach ( (array) $extra_data as $data_key => $data_values ) {
@@ -390,105 +435,343 @@ class themepacific_Jetpack_Carousel {
 
 		die( json_encode( array( 'comment_id' => $comment_id, 'comment_status' => $comment_status ) ) );
 	}
+	public function section_crn_intro(){
+		?>
+		<p><?php _e('Tiled Gallery with carousel will completely transform your galleries to new look and your users will love this.', 'themepacific_gallery'); ?></p>
+		<p><?php _e('Check out our other free <a href="http://themepacific.com/wp-plugins/?ref=themepacific_jetpack">plugins</a> and <a href="http://themepacific.com/?ref=themepacific_jetpack">themes</a>.', 'themepacific_gallery'); ?></p>
+		<?php
+		
+	}
+	function settings_validate($input){
 
-	function register_settings() {
-		add_settings_section('carousel_section', __( 'Image Gallery Carousel', 'themepacific_gallery' ), array( $this, 'carousel_section_callback' ), 'media');
+		return $input;
+	}
 
-		if ( ! $this->in_jetpack ) {
-			add_settings_field('carousel_enable_it', __( 'Enable carousel', 'themepacific_gallery' ), array( $this, 'carousel_enable_it_callback' ), 'media', 'carousel_section' );
-			register_setting( 'media', 'carousel_enable_it', array( $this, 'carousel_enable_it_sanitize' ) );
-		}
+	public function settings_page()	{
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e( 'ThemePacific Tiled Galleries Carousel Without Jetpack!', 'themepacific_gallery' ); ?></h1>
 
-		add_settings_field('carousel_background_color', __( 'Background color', 'themepacific_gallery' ), array( $this, 'carousel_background_color_callback' ), 'media', 'carousel_section' );
-		register_setting( 'media', 'carousel_background_color', array( $this, 'carousel_background_color_sanitize' ) );
 
-		add_settings_field('carousel_display_exif', __( 'Metadata', 'themepacific_gallery'), array( $this, 'carousel_display_exif_callback' ), 'media', 'carousel_section' );
-		register_setting( 'media', 'carousel_display_exif', array( $this, 'carousel_display_exif_sanitize' ) );
+			<!-- Tabs -->
+			<?php $active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'themepacific_gallery_tab_1'; ?>  
+
+			<div class="nav-tab-wrapper">
+				<a href="?page=themepacific_jp_gallery&tab=themepacific_gallery_tab_1" class="nav-tab <?php echo $active_tab == 'themepacific_gallery_tab_1' ? 'nav-tab-active' : ''; ?>">
+					<?php esc_html_e( 'Settings', 'themepacific_gallery' ); ?>
+				</a>
+				<a href="?page=themepacific_jp_gallery&tab=themepacific_gallery_tab_2" class="nav-tab <?php echo $active_tab == 'themepacific_gallery_tab_2' ? 'nav-tab-active' : ''; ?>">
+					<?php esc_html_e( 'Our Themes', 'themepacific_gallery' ); ?>
+				</a>
+				<a href="?page=themepacific_jp_gallery&tab=themepacific_gallery_tab_3" class="nav-tab <?php echo $active_tab == 'themepacific_gallery_tab_3' ? 'nav-tab-active' : ''; ?>">
+					<?php esc_html_e( 'Our Plugins', 'themepacific_gallery' ); ?>
+				</a>
+				<a href="?page=themepacific_jp_gallery&tab=themepacific_gallery_tab_4" class="nav-tab <?php echo $active_tab == 'themepacific_gallery_tab_4' ? 'nav-tab-active' : ''; ?>">
+					<?php esc_html_e( 'Support', 'themepacific_gallery' ); ?>
+				</a>
+			</div>
+
+			<!-- Tab Content -->
+			<?php if ( $active_tab == 'themepacific_gallery_tab_1' ) : ?>
+				<?php if( isset($_GET['settings-updated']) && $_GET['settings-updated'] ){ ?>
+				<div id="setting-error-settings_updated" class="updated settings-error"> 
+					<p><strong><?php _e( 'Settings saved.', 'themepacific_gallery' ); ?></strong></p>
+				</div>
+				<?php } ?>
+				<form action="options.php" method="post">
+					<?php settings_fields( 'themepacific_jp_gallery' ); ?>
+					<?php do_settings_sections( 'themepacific_jp_gallery' ); ?>
+					<p class="submit"><input type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'themepacific_gallery' ); ?>" /></p>
+				</form>
+
+			<?php endif;?>
+
+			<?php if ( $active_tab == 'themepacific_gallery_tab_2' ) : ?>
+
+
+				<div class="four-columns-wrap">
+
+					<p>
+						<?php esc_html_e( 'Check out all Free and Premium WordPress Themes. More themes in our site..', 'themepacific_gallery' ); ?>
+						
+					</p>
+
+					<div class="theme-browser rendered">
+						<div class="themes wp-clearfix">
+
+
+							<div class="theme">
+								<a href="https://themepacific.com/">
+									<div class="theme-screenshot">
+										<img src="<?php echo plugins_url( '/images/preview/bfastmag.jpg', __FILE__ )?>" alt="">
+									</div>
+
+									<div class="theme-id-container">
+										<h2 class="theme-name" id="newsmagz_pro-name">
+										BfastMag</h2>
+										<div class="theme-actions">
+											<a class="button button-primary customize load-customize hide-if-no-customize" href="https://themepacific.com/">Download</a>
+
+										</div>
+									</div>
+								</a>
+							</div>
+
+							<div class="theme">
+								<a href="https://themepacific.com/">
+									<div class="theme-screenshot">
+										<img src="<?php echo plugins_url( '/images/preview/bresponzive.jpg', __FILE__ )?>" alt="">
+									</div>
+
+									<div class="theme-id-container">
+										<h2 class="theme-name" id="newsmagz_pro-name">
+										Bresponzive</h2>
+										<div class="theme-actions">
+											<a class="button button-primary customize load-customize hide-if-no-customize" href="https://themepacific.com/">Download</a>
+
+										</div>
+									</div>
+								</a>
+							</div>
+							<div class="theme">
+								<a href="https://themepacific.com/">
+									<div class="theme-screenshot">
+										<img src="<?php echo plugins_url( '/images/preview/videozine.jpg', __FILE__ )?>" alt="">
+									</div>
+
+									<div class="theme-id-container">
+										<h2 class="theme-name" id="newsmagz_pro-name">
+										VideoZine</h2>
+										<div class="theme-actions">
+											<a class="button button-primary customize load-customize hide-if-no-customize" href="https://themepacific.com/">Download</a>
+
+										</div>
+									</div>
+								</a>
+							</div>
+
+
+						</div>
+					</div>
+
+
+
+				</div>
+			<?php endif;?>
+
+			<?php if ( $active_tab == 'themepacific_gallery_tab_3' ) : ?>
+
+				<div class="three-columns-wrap">
+
+					<br>
+					<p><?php esc_html_e( ' Checkout Our WordPress Plugins.', 'themepacific_gallery' ); ?></p>
+					<br>
+
+					<?php
+
+				 
+					$this->themepacific_gallery_recommended_plugin( 'tiled-gallery-carousel-without-jetpack', 'jetpack-carousel', esc_html__( 'Tiled Gallery Carousel Without JetPack', 'themepacific_gallery' ), esc_html__( 'Tiled Gallery with carousel will completely transform your galleries to new look and your users will love this.', 'themepacific_gallery' ) );	
+				 
+					$this->themepacific_gallery_recommended_plugin( 'tp-postviews-count-popular-posts-widgets', 'tp_postviews', esc_html__( 'PostViews Count & Popular Posts Widgets', 'themepacific_gallery' ), esc_html__( 'This Plugin based on Post Views will help sites to add post views and show Popular posts in Sidebar or anywhere. .', 'themepacific_gallery' ) );		
+
+
+					$this->themepacific_gallery_recommended_plugin( 'themepacific-review-lite', 'tpcrn_wpreview', esc_html__( ' WordPress Review', 'themepacific_gallery' ), esc_html__( 'WordPress Review and User Rating Plugin (TP WP Reviews) will help sites to add reviews to get more users without affecting page load speed.  ', 'themepacific_gallery' ) );
+
+					?></div>
+
+				<?php endif;?>
+					<?php if ( $active_tab == 'themepacific_gallery_tab_4' ) : ?>
+		
+					<div class="three-columns-wrap">
+
+				<br>
+
+				<div class="column-wdith-3">
+					<h3>
+						<span class="dashicons dashicons-sos"></span>
+						<?php esc_html_e( 'Forums', 'themepacific_gallery' ); ?>
+					</h3>
+					<p>
+						<?php esc_html_e( 'Before asking a questions it\'s highly recommended to search on forums, but if you can\'t find the solution feel free to create a new topic.', 'themepacific_gallery' ); ?>
+						<hr>
+						<a target="_blank" href="<?php echo esc_url('https://themepacific.com/support/'); ?>"><?php esc_html_e( 'Go to Support Forums', 'themepacific_gallery' ); ?></a>
+					</p>
+				</div>
+ 
+ 
+
+				<div class="column-wdith-3">
+					<h3>
+						<span class="dashicons dashicons-smiley"></span>
+						<?php esc_html_e( 'Facebook Support', 'themepacific_gallery' ); ?>
+					</h3>
+					<p>
+						<?php esc_html_e( 'Like Our Facebook Page and you can send your suggestions via FB. If you have any issues, send the details.', 'themepacific_gallery' ); ?>
+						<hr>
+						<a target="_blank" href="<?php echo esc_url('https://www.facebook.com/themepacific/'); ?>"><?php esc_html_e( 'Facebook', 'themepacific_gallery' ); ?></a>
+					</p>
+				</div>
+
+			</div>
+				<?php endif;?>
+
+
+
+				<?php
+			}
+			function register_settings() {
+				add_settings_section( 'themepacific_jp_gallery', '', array(&$this, 'section_crn_intro'), 'themepacific_jp_gallery' );
+
+				add_settings_section('carousel_section', __( 'Image Gallery Carousel', 'themepacific_gallery' ), array( $this, 'carousel_section_callback' ), 'themepacific_jp_gallery');
+
+				if ( ! $this->in_jetpack ) {
+					add_settings_field('carousel_enable_it', __( 'Enable carousel', 'themepacific_gallery' ), array( $this, 'carousel_enable_it_callback' ), 'themepacific_jp_gallery', 'carousel_section' );
+					register_setting( 'themepacific_jp_gallery', 'carousel_enable_it', array( $this, 'carousel_enable_it_sanitize' ) );
+				}
+
+				add_settings_field('carousel_background_color', __( 'Background color', 'themepacific_gallery' ), array( $this, 'carousel_background_color_callback' ), 'themepacific_jp_gallery', 'carousel_section' );
+				register_setting( 'themepacific_jp_gallery', 'carousel_background_color', array( $this, 'carousel_background_color_sanitize' ) );
+
+				add_settings_field('carousel_display_exif', __( 'Metadata', 'themepacific_gallery'), array( $this, 'carousel_display_exif_callback' ), 'themepacific_jp_gallery', 'carousel_section' );
+				register_setting( 'themepacific_jp_gallery', 'carousel_display_exif', array( $this, 'carousel_display_exif_sanitize' ) );
+
+				add_settings_field('comments_display', __( 'Show Comments', 'themepacific_gallery' ), array( $this, 'comments_display_callback' ), 'themepacific_jp_gallery', 'carousel_section' );
+				register_setting( 'themepacific_jp_gallery', 'comments_display', array( $this, 'carousel_display_geo_sanitize' ) );
+
+				add_settings_field('fullsize_display', __( 'Show View Fullsize', 'themepacific_gallery' ), array( $this, 'fullsize_display_callback' ), 'themepacific_jp_gallery', 'carousel_section' );
+				register_setting( 'themepacific_jp_gallery', 'fullsize_display', array( $this, 'carousel_display_geo_sanitize' ) );
 
 		// No geo setting yet, need to "fuzzify" data first, for privacy
-		// add_settings_field('carousel_display_geo', __( 'Geolocation', 'themepacific_gallery' ), array( $this, 'carousel_display_geo_callback' ), 'media', 'carousel_section' );
-		// register_setting( 'media', 'carousel_display_geo', array( $this, 'carousel_display_geo_sanitize' ) );
-	}
+		// add_settings_field('carousel_display_geo', __( 'Geolocation', 'themepacific_gallery' ), array( $this, 'carousel_display_geo_callback' ), 'themepacific_jp_gallery', 'carousel_section' );
+		// register_setting( 'themepacific_jp_gallery', 'carousel_display_geo', array( $this, 'carousel_display_geo_sanitize' ) );
+			}
 
+// Check if plugin is installed
+			function themepacific_gallery_check_installed_plugin( $slug, $filename ) {
+				return file_exists( ABSPATH . 'wp-content/plugins/' . $slug . '/' . $filename . '.php' ) ? true : false;
+			}
+
+// Generate Recommended Plugin HTML
+			function themepacific_gallery_recommended_plugin( $slug, $filename, $name, $description) {
+
+				if ( $slug === 'facebook-pagelike-widget' ) {
+					$size = '128x128';
+				} else {
+					$size = '256x256';
+				}
+
+				?>
+
+				<div class="plugin-card">
+					<div class="name column-name">
+						<h3>
+							<?php echo esc_html( $name ); ?>
+							<img src="<?php echo esc_url('https://ps.w.org/'. $slug .'/assets/icon-'. $size .'.jpg') ?>" class="plugin-icon" alt="">
+						</h3>
+					</div>
+					<div class="action-links">
+						<?php if ( $this->themepacific_gallery_check_installed_plugin( $slug, $filename ) ) : ?>
+							<button type="button" class="button button-disabled" disabled="disabled"><?php esc_html_e( 'Installed', 'themepacific_gallery' ); ?></button>
+						<?php else : ?>
+							<a class="install-now button-primary" href="<?php echo esc_url( wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin='. $slug ), 'install-plugin_'. $slug ) ); ?>" >
+								<?php esc_html_e( 'Install Now', 'themepacific_gallery' ); ?>
+							</a>							
+						<?php endif; ?>
+					</div>
+					<div class="desc column-description">
+						<p><?php echo esc_html( $description ); ?></p>
+					</div>
+				</div>
+
+				<?php
+			}
 	// Fulfill the settings section callback requirement by returning nothing
-	function carousel_section_callback() {
-		return;
-	}
+			function carousel_section_callback() {
+				return;
+			}
 
-	function test_1or0_option( $value, $default_to_1 = true ) {
-		if ( true == $default_to_1 ) {
+			function test_1or0_option( $value, $default_to_1 = true ) {
+				if ( true == $default_to_1 ) {
 			// Binary false (===) of $value means it has not yet been set, in which case we do want to default sites to 1
-			if ( false === $value )
-				$value = 1;
+					if ( false === $value )
+						$value = 1;
+				}
+				return ( 1 == $value ) ? 1 : 0;
+			}
+
+			function sanitize_1or0_option( $value ) {
+				return ( 1 == $value ) ? 1 : 0;
+			}
+
+			function settings_checkbox($name, $label_text, $extra_text = '', $default_to_checked = true) {
+				if ( empty( $name ) )
+					return;
+				$option = $this->test_1or0_option( get_option( $name ), $default_to_checked );
+				echo '<fieldset>';
+				echo '<input type="checkbox" name="'.esc_attr($name).'" id="'.esc_attr($name).'" value="1" ';
+				checked( '1', $option );
+				echo '/> <label for="'.esc_attr($name).'">'.$label_text.'</label>';
+				if ( ! empty( $extra_text ) )
+					echo '<p class="description">'.$extra_text.'</p>';
+				echo '</fieldset>';
+			}
+
+			function settings_select($name, $values, $extra_text = '') {
+				if ( empty( $name ) || ! is_array( $values ) || empty( $values ) )
+					return;
+				$option = get_option( $name );
+				echo '<fieldset>';
+				echo '<select name="'.esc_attr($name).'" id="'.esc_attr($name).'">';
+				foreach( $values as $key => $value ) {
+					echo '<option value="'.esc_attr($key).'" ';
+					selected( $key, $option );
+					echo '>'.esc_html($value).'</option>';
+				}
+				echo '</select>';
+				if ( ! empty( $extra_text ) )
+					echo '<p class="description">'.$extra_text.'</p>';
+				echo '</fieldset>';
+			}
+
+			function carousel_display_exif_callback() {
+				$this->settings_checkbox( 'carousel_display_exif', __( 'Show photo metadata (<a href="http://en.wikipedia.org/wiki/Exchangeable_image_file_format" target="_blank">Exif</a>) in carousel, when available.', 'themepacific_gallery' ) );
+			}
+
+			function comments_display_callback() {
+				$this->settings_checkbox( 'comments_display', __( 'Show  Comment box Below in the Slideshow.', 'themepacific_gallery' ) );
+			}		
+
+			function fullsize_display_callback() {
+				$this->settings_checkbox( 'fullsize_display', __( 'Show  View Full size Image Link.', 'themepacific_gallery' ) );
+			}
+
+			function carousel_display_exif_sanitize( $value ) {
+				return $this->sanitize_1or0_option( $value );
+			}
+
+			function carousel_display_geo_callback() {
+				$this->settings_checkbox( 'carousel_display_geo', __( 'Show map of photo location in carousel, when available.', 'themepacific_gallery' ) );
+			}
+
+			function carousel_display_geo_sanitize( $value ) {
+				return $this->sanitize_1or0_option( $value );
+			}
+
+			function carousel_background_color_callback() {
+				$this->settings_select( 'carousel_background_color', array( 'black' => __( 'Black', 'themepacific_gallery' ), 'white' => __( 'White', 'themepacific_gallery', 'themepacific_gallery' ) ) );
+			}
+
+			function carousel_background_color_sanitize( $value ) {
+				return ( 'white' == $value ) ? 'white' : 'black';
+			}
+
+			function carousel_enable_it_callback() {
+				$this->settings_checkbox( 'carousel_enable_it', __( 'Display images in full-size carousel slideshow.', 'themepacific_gallery' ) );
+			}
+
+			function carousel_enable_it_sanitize( $value ) {
+				return $this->sanitize_1or0_option( $value );
+			}
 		}
-		return ( 1 == $value ) ? 1 : 0;
-	}
 
-	function sanitize_1or0_option( $value ) {
-		return ( 1 == $value ) ? 1 : 0;
-	}
-
-	function settings_checkbox($name, $label_text, $extra_text = '', $default_to_checked = true) {
-		if ( empty( $name ) )
-			return;
-		$option = $this->test_1or0_option( get_option( $name ), $default_to_checked );
-		echo '<fieldset>';
-		echo '<input type="checkbox" name="'.esc_attr($name).'" id="'.esc_attr($name).'" value="1" ';
-		checked( '1', $option );
-		echo '/> <label for="'.esc_attr($name).'">'.$label_text.'</label>';
-		if ( ! empty( $extra_text ) )
-			echo '<p class="description">'.$extra_text.'</p>';
-		echo '</fieldset>';
-	}
-
-	function settings_select($name, $values, $extra_text = '') {
-		if ( empty( $name ) || ! is_array( $values ) || empty( $values ) )
-			return;
-		$option = get_option( $name );
-		echo '<fieldset>';
-		echo '<select name="'.esc_attr($name).'" id="'.esc_attr($name).'">';
-		foreach( $values as $key => $value ) {
-			echo '<option value="'.esc_attr($key).'" ';
-			selected( $key, $option );
-			echo '>'.esc_html($value).'</option>';
-		}
-		echo '</select>';
-		if ( ! empty( $extra_text ) )
-			echo '<p class="description">'.$extra_text.'</p>';
-		echo '</fieldset>';
-	}
-
-	function carousel_display_exif_callback() {
-		$this->settings_checkbox( 'carousel_display_exif', __( 'Show photo metadata (<a href="http://en.wikipedia.org/wiki/Exchangeable_image_file_format" target="_blank">Exif</a>) in carousel, when available.', 'themepacific_gallery' ) );
-	}
-
-	function carousel_display_exif_sanitize( $value ) {
-		return $this->sanitize_1or0_option( $value );
-	}
-
-	function carousel_display_geo_callback() {
-		$this->settings_checkbox( 'carousel_display_geo', __( 'Show map of photo location in carousel, when available.', 'themepacific_gallery' ) );
-	}
-
-	function carousel_display_geo_sanitize( $value ) {
-		return $this->sanitize_1or0_option( $value );
-	}
-
-	function carousel_background_color_callback() {
-		$this->settings_select( 'carousel_background_color', array( 'black' => __( 'Black', 'themepacific_gallery' ), 'white' => __( 'White', 'themepacific_gallery', 'themepacific_gallery' ) ) );
-	}
-
-	function carousel_background_color_sanitize( $value ) {
-		return ( 'white' == $value ) ? 'white' : 'black';
-	}
-
-	function carousel_enable_it_callback() {
-		$this->settings_checkbox( 'carousel_enable_it', __( 'Display images in full-size carousel slideshow.', 'themepacific_gallery' ) );
-	}
-
-	function carousel_enable_it_sanitize( $value ) {
-		return $this->sanitize_1or0_option( $value );
-	}
-}
-
-new themepacific_Jetpack_Carousel;
+		new themepacific_Jetpack_Carousel;

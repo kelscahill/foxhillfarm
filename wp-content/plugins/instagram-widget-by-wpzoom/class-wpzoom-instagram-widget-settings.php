@@ -89,11 +89,11 @@ class Wpzoom_Instagram_Widget_Settings {
 
                 <div class="zoom-instagram-widget">
 
-                    <h2>Connect with Instagram</h2>
+                    <h2><?php _e('Connect with Instagram', 'wpzoom-instagram-widget'); ?></h2>
 
                     <p><?php _e( 'To get started click the button below. You’ll be prompted to authorize WPZOOM to access your Instagram photos.', 'wpzoom-instagram-widget' ); ?></p>
 
-                    <p class="description"><?php _e( 'Due to recent Instagram API changes it is no longer possible to display photos from a different Instagram account then yours. The widget will automatically display the latest photos of the account which was authorized on this page.', 'wpzoom-instagram-widget' ); ?></p>
+                    <p class="description"><?php _e( 'Due to recent Instagram API changes it is no longer possible to display photos from a different Instagram account than yours. The widget will automatically display the latest photos of the account which was authorized on this page.', 'wpzoom-instagram-widget' ); ?></p>
 
                     <br />
 

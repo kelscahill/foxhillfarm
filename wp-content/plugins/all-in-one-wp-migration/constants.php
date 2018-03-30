@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2016 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,32 +23,24 @@
  * ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
  */
 
-$local = array(
-	'iliev.local',
-	'develop.servmask.com',
-	'Borislav-MacBook-Pro.local',
-	'Simeon-PC',
-);
-
-if ( function_exists( 'gethostname' ) && in_array( gethostname(), $local ) ) {
-	define( 'AI1WM_DEBUG', true );
-} else {
-	define( 'AI1WM_DEBUG', false );
-}
+// ================
+// = Plugin Debug =
+// ================
+define( 'AI1WM_DEBUG', false );
 
 // ==================
 // = Plugin Version =
 // ==================
-define( 'AI1WM_VERSION', '5.46' );
+define( 'AI1WM_VERSION', '6.65' );
 
 // ===============
 // = Plugin Name =
 // ===============
 define( 'AI1WM_PLUGIN_NAME', 'all-in-one-wp-migration' );
 
-// =================
+// ===================
 // = Directory Index =
-// =================
+// ===================
 define( 'AI1WM_DIRECTORY_INDEX', 'index.php' );
 
 // ================
@@ -92,6 +84,11 @@ define( 'AI1WM_EXPORT_PATH', AI1WM_MODEL_PATH . DIRECTORY_SEPARATOR . 'export' )
 define( 'AI1WM_IMPORT_PATH', AI1WM_MODEL_PATH . DIRECTORY_SEPARATOR . 'import' );
 
 // =============
+// = Http Path =
+// =============
+define( 'AI1WM_HTTP_PATH', AI1WM_MODEL_PATH . DIRECTORY_SEPARATOR . 'http' );
+
+// =============
 // = View Path =
 // =============
 define( 'AI1WM_TEMPLATES_PATH', AI1WM_LIB_PATH . DIRECTORY_SEPARATOR . 'view' );
@@ -126,6 +123,11 @@ define( 'AI1WM_ARCHIVE_TOOLS_URL', 'https://servmask.com/archive/tools' );
 // =========================
 define( 'AI1WM_TABLE_PREFIX', 'SERVMASK_PREFIX_' );
 
+// ========================
+// = Archive Backups Name =
+// ========================
+define( 'AI1WM_BACKUPS_NAME', 'ai1wm-backups' );
+
 // =========================
 // = Archive Database Name =
 // =========================
@@ -145,11 +147,6 @@ define( 'AI1WM_MULTISITE_NAME', 'multisite.json' );
 // = Archive Blogs Name =
 // ======================
 define( 'AI1WM_BLOGS_NAME', 'blogs.json' );
-
-// ========================
-// = Archive Status Name  =
-// ========================
-define( 'AI1WM_STATUS_NAME', 'status.js' );
 
 // ========================
 // = Archive FileMap Name =
@@ -181,10 +178,10 @@ define( 'AI1WM_ERROR_NAME', 'error.log' );
 // ==========
 define( 'AI1WM_URL_IP', 'ai1wm_url_ip' );
 
-// =================
-// = URL Transport =
-// =================
-define( 'AI1WM_URL_TRANSPORT', 'ai1wm_url_transport' );
+// ===============
+// = URL Adapter =
+// ===============
+define( 'AI1WM_URL_ADAPTER', 'ai1wm_url_adapter' );
 
 // ==============
 // = Secret Key =
@@ -211,15 +208,35 @@ define( 'AI1WM_ACTIVE_PLUGINS', 'active_plugins' );
 // ===========================
 define( 'AI1WM_ACTIVE_SITEWIDE_PLUGINS', 'active_sitewide_plugins' );
 
+// ==========================
+// = Jetpack Active Modules =
+// ==========================
+define( 'AI1WM_JETPACK_ACTIVE_MODULES', 'jetpack_active_modules' );
+
 // ======================
 // = MS Files Rewriting =
 // ======================
 define( 'AI1WM_MS_FILES_REWRITING', 'ms_files_rewriting' );
 
+// ===================
+// = Active Template =
+// ===================
+define( 'AI1WM_ACTIVE_TEMPLATE', 'template' );
+
+// =====================
+// = Active Stylesheet =
+// =====================
+define( 'AI1WM_ACTIVE_STYLESHEET', 'stylesheet' );
+
 // ===============
 // = Updater Key =
 // ===============
 define( 'AI1WM_UPDATER', 'ai1wm_updater' );
+
+// ==============
+// = Status Key =
+// ==============
+define( 'AI1WM_STATUS', 'ai1wm_status' );
 
 // =================
 // = Support Email =
@@ -278,14 +295,19 @@ define( 'AI1WM_STORAGE_INDEX', AI1WM_STORAGE_PATH . DIRECTORY_SEPARATOR . 'index
 // ======================
 define( 'AI1WM_BACKUPS_INDEX', AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . 'index.php' );
 
-// ======================
+// =========================
 // = Backups Htaccess File =
-// ======================
+// =========================
 define( 'AI1WM_BACKUPS_HTACCESS', AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . '.htaccess' );
 
-// ====================================
+// ==========================
+// = Backups Webconfig File =
+// ==========================
+define( 'AI1WM_BACKUPS_WEBCONFIG', AI1WM_BACKUPS_PATH . DIRECTORY_SEPARATOR . 'web.config' );
+
+// ================================
 // = WP Migration Plugin Base Dir =
-// ====================================
+// ================================
 if ( defined( 'AI1WM_PLUGIN_BASENAME' ) ) {
 	define( 'AI1WM_PLUGIN_BASEDIR', dirname( AI1WM_PLUGIN_BASENAME ) );
 } else {
@@ -530,4 +552,64 @@ if ( ! defined( 'AI1WMOE_PLUGIN_KEY' ) ) {
 // ============================
 if ( ! defined( 'AI1WMOE_PLUGIN_SHORT' ) ) {
 	define( 'AI1WMOE_PLUGIN_SHORT', 'onedrive' );
+}
+
+// ==========================
+// = Box Extension Base Dir =
+// ==========================
+if ( defined( 'AI1WMBE_PLUGIN_BASENAME' ) ) {
+	define( 'AI1WMBE_PLUGIN_BASEDIR', dirname( AI1WMBE_PLUGIN_BASENAME ) );
+} else {
+	define( 'AI1WMBE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-box-extension' );
+}
+
+// =======================
+// = Box Extension About =
+// =======================
+if ( ! defined( 'AI1WMBE_PLUGIN_ABOUT' ) ) {
+	define( 'AI1WMBE_PLUGIN_ABOUT', 'https://servmask.com/products/box-extension/about' );
+}
+
+// =====================
+// = Box Extension Key =
+// =====================
+if ( ! defined( 'AI1WMBE_PLUGIN_KEY' ) ) {
+	define( 'AI1WMBE_PLUGIN_KEY', 'ai1wmbe_plugin_key' );
+}
+
+// =======================
+// = Box Extension Short =
+// =======================
+if ( ! defined( 'AI1WMBE_PLUGIN_SHORT' ) ) {
+	define( 'AI1WMBE_PLUGIN_SHORT', 'box' );
+}
+
+// ===========================
+// = Mega Extension Base Dir =
+// ===========================
+if ( defined( 'AI1WMEE_PLUGIN_BASENAME' ) ) {
+	define( 'AI1WMEE_PLUGIN_BASEDIR', dirname( AI1WMEE_PLUGIN_BASENAME ) );
+} else {
+	define( 'AI1WMEE_PLUGIN_BASEDIR', 'all-in-one-wp-migration-mega-extension' );
+}
+
+// ========================
+// = Mega Extension About =
+// ========================
+if ( ! defined( 'AI1WMEE_PLUGIN_ABOUT' ) ) {
+	define( 'AI1WMEE_PLUGIN_ABOUT', 'https://servmask.com/products/mega-extension/about' );
+}
+
+// ======================
+// = Mega Extension Key =
+// ======================
+if ( ! defined( 'AI1WMEE_PLUGIN_KEY' ) ) {
+	define( 'AI1WMEE_PLUGIN_KEY', 'ai1wmee_plugin_key' );
+}
+
+// ========================
+// = Mega Extension Short =
+// ========================
+if ( ! defined( 'AI1WMEE_PLUGIN_SHORT' ) ) {
+	define( 'AI1WMEE_PLUGIN_SHORT', 'mega' );
 }

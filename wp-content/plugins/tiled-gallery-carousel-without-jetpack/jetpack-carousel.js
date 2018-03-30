@@ -116,6 +116,7 @@ jQuery(document).ready(function($) {
 	};
 
 	var prepareGallery = function( dataCarouselExtra ){
+		buttons ='';
 		if (!overlay) {
 			overlay = $('<div></div>')
 				.addClass('jp-carousel-overlay')
@@ -126,15 +127,23 @@ jQuery(document).ready(function($) {
 					'bottom'   : 0,
 					'left'     : 0
 				});
+if (jetpackCarouselStrings.comment ) {
+				buttons  = '<a class="jp-carousel-commentlink" href="#">' + jetpackCarouselStrings.comment + '</a>';
 
-			buttons  = '<a class="jp-carousel-commentlink" href="#">' + jetpackCarouselStrings.comment + '</a>';
+			}else{
+				buttons ='';
+			}
 			if ( 1 == jetpackCarouselStrings.is_logged_in ) {
 			}
 			buttons += getCarouselLikeWidgets( dataCarouselExtra );
-			buttons  = $('<div class="jp-carousel-buttons">' + buttons + '</div>');
+			if(buttons){
 
+			buttons  = $('<div class="jp-carousel-buttons">' + buttons + '</div>');
+}
 			caption    = $('<h2></h2>');
 			photo_info = $('<div class="jp-carousel-photo-info"></div>').append(caption);
+
+ 
 
 			imageMeta = $('<div></div>')
 				.addClass('jp-carousel-image-meta')
@@ -143,11 +152,17 @@ jQuery(document).ready(function($) {
 					'margin-top' : '20px',
 					'width'      :  '250px'
 				});
+				imageMeta.append( buttons );
 
-			imageMeta.append( buttons );
+
 			imageMeta.append( "<ul class='jp-carousel-image-exif' style='display:none;'></ul>" );
 			imageMeta.append( "<a class='jp-carousel-image-download' style='display:none;'></a>" );
 			imageMeta.append( "<div class='jp-carousel-image-map' style='display:none;'></div>" );
+
+ if(jetpackCarouselStrings.display_exif == '0' &&  jetpackCarouselStrings.display_comments == '0' &&  jetpackCarouselStrings.fullsize_display == '0' ){
+  	imageMeta.hide();
+ }
+
 
 			titleAndDescription = $('<div></div>')
 				.addClass('jp-carousel-titleanddesc')
@@ -1064,8 +1079,10 @@ jQuery(document).ready(function($) {
 
 		// updateExif updates the contents of the exif UL (.jp-carousel-image-exif)
 		updateExif: function( meta ) {
-			if ( !meta || 1 != jetpackCarouselStrings.display_exif )
-				return false;
+			if ( !meta || 1 != jetpackCarouselStrings.display_exif ){
+ 				return false;
+			}	
+ 
 
 			var $ul = $( "<ul class='jp-carousel-image-exif'></ul>" );
 			$.each( meta, function( key, val ) {
@@ -1092,6 +1109,7 @@ jQuery(document).ready(function($) {
 
 			// Update (replace) the content of the ul
 			$( 'div.jp-carousel-image-meta ul.jp-carousel-image-exif' ).replaceWith( $ul );
+			 
 		},
 
 		// updateFullSizeLink updates the contents of the jp-carousel-image-download link
@@ -1106,7 +1124,11 @@ jQuery(document).ready(function($) {
 					.attr( 'target', '_blank' );
 
 			// Update (replace) the content of the anchor
-			$( 'div.jp-carousel-image-meta a.jp-carousel-image-download' ).replaceWith( permalink );
+if(jetpackCarouselStrings.fullsize_display == 1){
+				$( 'div.jp-carousel-image-meta a.jp-carousel-image-download' ).replaceWith( permalink );
+
+}
+
 		},
 
 		updateMap: function( meta ) {

@@ -12,7 +12,7 @@ class Vamtam_Updates_2 {
 		$this->main_file = trailingslashit( $this->slug ) . basename( $file );
 		$this->full_path = $file;
 
-		$this->api_url = 'http://updates.api.vamtam.com/0/envato/check';
+		$this->api_url = 'https://updates.api.vamtam.com/0/envato/check';
 
 		// delete_site_transient( 'update_plugins' );
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check' ) );

@@ -1,10 +1,9 @@
 === WP Retina 2x ===
 Contributors: TigrouMeow
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=H2S7S3G4XMJ6J
-Tags: retina, images, image, responsive, admin, attachment, media, files, iphone, ipad, high-dpi
+Tags: retina, images, image, responsive, lazysizes, lazy, attachment, media, files, iphone, ipad, high-dpi
 Requires at least: 3.5
-Tested up to: 4.5.3
-Stable tag: 4.5.5
+Tested up to: 4.9
+Stable tag: 5.2.3
 
 Make your website look beautiful and crisp on modern displays by creating and displaying retina images. WP 4.4+ is also supported and enhanced.
 
@@ -12,17 +11,19 @@ Make your website look beautiful and crisp on modern displays by creating and di
 
 This plugin does two things: it creates the image files required by the High-DPI devices and it displays them to your visitors accordingly. Your website will look beautiful and crisp on every device! The retina images will be generated for you automatically (though you can also do it manually) and served to the retina devices. The concept of retina images for full-size images is also a very unique feature which is only provided by this plugin (which is why it became unique).
 
-**Retina Methods**. It supports different methods to serve the images to your visitors. Why? Depending on the theme and plugins you are using (and also the way you use images in your website), not all the methods can work. Ideally, I would recommend using the Responsive Images method, then if it doesn't work, the PictureFill method (which covers normally most cases). RetinaJS should be the fallback method. The methods available are: PictureFill (future HTML standard + its JS polyfill), Responsive Images (only use the src-set created internally by WP 4.4+), Retina.js (JS only), IMG Rewrite (on-the-fly HTML rewrite) and Retina-Images (server handler). A lazy-loading option is available as well (works with PicturFill and Responsive Images). Pick the one that works best with your hosting and WordPress environment.
-
-**WP 4.4+**. Since WordPress 4.4, there is support for Responsive Images. WP Retina 2x handles this well and nicely adds the retina images in the src-set created by WordPress. The HTML for the images not handled by WP 4.4 will also be handled by the plugin. Moreover, the plugin also has two options specific to WP 4.4+. One is to disable the Responsive Image support, the second one is to disable the additional image size called Medium Large.
+**Retina Methods**. It supports different methods to serve the images to your visitors. Why? Depending on the theme and plugins you are using (and also the way you use images in your website), not all the methods can work. Ideally, I would recommend using the Responsive Images method, then if it doesn't work, the PictureFill method (which covers normally most cases). Retina.js should be the fallback method. There are more methods than this with their specific options.
 
 **Plug & Play**. With a well-made theme and website, this plugin doesn't require normally any specific set-up. All the defaults settings are fine. Works with multi-site and many kinds of installs.
 
-**Optimized**. The plugin is very fast and optimized. It doesn't create anything in the database. In most cases, it doesn't even require any configuration.
+**Optimized**. The plugin is very fast and optimized. It doesn't create anything in the database.
 
-**CSS & Background Images**. The plugin can't add retina support to your CSS (that would be too dangerous), and therefore your CSS background images. If your themes or plugins are using them heavily, you can contact the developer and kindly ask to use WP Retina 2x API to add retina support to those background images (that is possible this way). A few gallery and slider plugins are using CSS background images.
+**Pro**. When activated, the Pro version adds support for Retina for full-size, support for lazy-loading for your responsive images and various options. And it supports my work :)
 
-More information and tutorial available one http://apps.meow.fr/wp-retina-2x/.
+**Responsive Images**. WP has support for Responsive Images and this plugin handles this nicely by adding the retina images in the src-set created by WordPress. The HTML for the images not handled by WP 4.4 (outside posts) will also be handled by the plugin (pick "Picturefill" method for this). The plugin also provides an option to disable the 'Medium Large' created by WordPress which is actually not useful (it's a hack basically), this plugin does it better.
+
+**CSS & Background Images**. The plugin cannot inject CSS to handles the images added through CSS, that's both too dangerous and potentially very incorrect. However, in its Pro version and with PictureFill, you get an option to replace the inline CSS background image by their retina equivalent.
+
+More information and tutorial available one http://meowapps.com/wp-retina-2x/.
 
 = Quickstart =
 
@@ -32,16 +33,65 @@ More information and tutorial available one http://apps.meow.fr/wp-retina-2x/.
 
 == Changelog ==
 
-= 4.5.5 =
-* Update: LazyLoad 2.0.0
+= 5.2.3 =
+* Fix: Sanitization to avoid cross-site scripting.
+* Fix: Additional security fixes.
+
+= 5.2.0 =
+* Fix: When metadata is broken, displays a message.
+* Fix: A few icons weren't displayed nicely.
+* Fix: When metadata is broken, displays a message.
+* Update: From Lazysizes 3.0 to 4.0.1.
+* Add: Option for forcing SSL Verify.
+
+= 5.1.4 =
+* Add: wr2x_retina_extension, wr2x_delete_attachment, wr2x_get_pathinfo_from_image_src, wr2x_picture_rewrite in the API.
+
+= 5.0.5 =
+* Fix: There was a issue with the .htaccess rewriting (Class ‘Meow_Admin’ not found).
+* Update: Core was totally re-organized and cleaned. Ready for nice updates.
+* Update: LazyLoading from version 2.0 to 3.0.
+* Info: There will be an important warning showing up during this update. It is an important annoucement.
+
+= 4.8.0 =
+* Add: Retina Image Quality for JPG (between 0 and 100). I know this little setting was really wanted :)
+* Fix: Disabled sizes weren't really disabled in the UI.
+* Fix: Notices about Ignore appearing in other screens.
+* Add: Handles incompatibility with JetPack's Photon.
+* Info: If you are using Lightroom, please have a look at my plugin for synchronizing your Lightroom to WordPress: http://meowapps.com/wplr-sync/. And if youi love my Retina plugin, please write a little review here: https://wordpress.org/support/plugin/wp-retina-2x/reviews/?rate=5#new-post. Thank you :)
+
+= 4.7.7 =
+* Add: The Generate button (and the bulk Generate) will now also Re-Generate the thumbnails as well (like the Renerate Thumbnails plugin). If you are interested in a option to disable this behavior, please say so in the WP forums.
+
+= 4.7.6 =
+* Fix: Issue with Pro being non-Pro outside of WP Admin.
+* Fix: Retina debugging file was not being created properly.
+
+= 4.7.5 =
+* Fix: Don't delete the full-size Retina if we re-generate.
+* Fix: Little issue with Ignore.
+* Update: Additional debugging.
+* Info: Please write a review for the plugin if you are happy with it. I am trying my best to make this plugin to work with every kind of WP install and system :)
+
+= 4.7.4 =
+* Update: Retina was moved into a new Meow Apps menu. The whole Meow Apps menu can be then hidden. For a nicer WP admin. The whole admin UI was updated.
+* Add: New PictureFill option: inline CSS background can be now replaced by Retina images (excellent for sliders for example).
+* Add: Over HTTP Check option: check for retina image remotely, for example if you are using images from a different website or server, it will check for the Retina version. Works with the PictureFill method.
+* Change: Mobile detection was completely turned off as I don't think it should be used, but let's see if some of yours still need it. Ideally I would like to remove it from the code.
+* Fix: Check if the CDN is already present before modifying/adding.
+
+= 4.6.0 =
+* Fix: Button Details was not working properly.
+* Fix: Removed the beta Retina Uploader which is not working yet (was included by mistake).
+* Update: Added the info screen available in the Retina Dashboard in the Media Library as well and improved the UI a tiny bit (it was a bit messy if you had a lot of image sizes.)
+
+= 4.5.8 =
+* Update: LazyLoad 2.0.3
+* Fix: Don't display Retina information for a media that is not an image.
 * Update: Retina.js 2.0.0
 * Fix: Drag & Drop upload was a bit buggy, it now has been improved a lot!
 * Add: Option to hide the ads, flatter and message about the Pro.
-* Info: To welcome summer, the Pro version (Forever) is only at 20$. Please support me and my plugin and get it here: http://apps.meow.fr/wp-retina-2x/ :) Thank you a lot!
-
-= 4.5.0 =
 * Update: Options styles.
-* Info: Are you using Lightroom? I made a plugin to synchronize Lightroom with WordPress, did you knew? It is called WP/LR Sync: https://wordpress.org/plugins/wplr-sync/. Photographers love it, please check it out :)
 
 = 4.4.6 =
 * Update: LazyLoad 1.5
@@ -54,7 +104,7 @@ More information and tutorial available one http://apps.meow.fr/wp-retina-2x/.
 * Update: Ignore Responsive Images support if the media ID is not existent (in case of broken HTML).
 
 = 4.4.0 =
-* Info: Please read my blog post about WP 4.4 + Retina on http://apps.meow.fr/wordpress-4-4-retina/.
+* Info: Please read my blog post about WP 4.4 + Retina on http://meowapps.com/wordpress-4-4-retina/.
 * Add: New "Responsive Images" method.
 * Add: Lot more information is available in the Retina settings, to help the newbies :)
 * Update: Headers are compliant to WP 4.4.
@@ -62,9 +112,6 @@ More information and tutorial available one http://apps.meow.fr/wp-retina-2x/.
 * Update: Support for WP 4.4.
 
 = 3.5.2 =
-* Update: Little modification for SmushIt (https://wordpress.org/support/topic/wp-retina-2x-support-in-wp-smush?replies=1#post-7460268).
-
-= 3.4.6 =
 * Fix: Search string not null but empty induces error.
 * Change: User Agent used for Pro authentication.
 * Fix: Issues with class containing trailing spaces. Fixed in in SimpleHTMLDOM.
@@ -84,9 +131,6 @@ More information and tutorial available one http://apps.meow.fr/wp-retina-2x/.
 * Fix: There was an issue with local path for a few installs.
 * Add: Introduced $wr2x_extra_debug for extra developer debug (might be handy).
 * Fix: Issues with retina images outside the uploads directory.
-* Info: Please write a review for the plugin if you are happy with it. I am trying my best to make this plugin to work with every kind of WP install and system :)
-
-= 3.2.4 =
 * Add: Custom CDN Domain support (check the "Custom CDN Domain" option).
 * Fix: Removed a console.log that was forgotten ;)
 * Change: different way of getting the temporary folder to write files (might help in a few cases).
@@ -112,7 +156,7 @@ More information and tutorial available one http://apps.meow.fr/wp-retina-2x/.
 * Add: (PRO) New pop-up screen with detailed information.
 * Add: (PRO) Added Retina for Full-Size with upload feature. Please note that Full-Size Retina also works with the normal version but you will have to manually resize and upload them.
 * Add: (PRO) Option to avoid removing img's src when using PictureFill.
-* Info: The serial for the Pro version can be bought at http://apps.meow.fr/wp-retina-2x. Thanks for all your support, the plugin is going to be 3 years old this year! :)
+* Info: The serial for the Pro version can be bought at http://meowapps.com/wp-retina-2x. Thanks for all your support, the plugin is going to be 3 years old this year! :)
 
 = 2.6.0 =
 * Add: Support Manual Image Crop, resize the @2x as the user manually cropped them (that's cool!).
@@ -146,8 +190,6 @@ More information and tutorial available one http://apps.meow.fr/wp-retina-2x/.
 * Add: warning message if using the server-side method without the pretty permalinks.
 * Add: warning message if using the server-side method on a multisite WordPress install.
 * Change: the client-method (retina.js) is now used by default.
-
-= 0.2.6 =
 * Fix: simplified version of the .htaccess directive.
 * Fix: new version of the client-side method (Retina.js), works 100x faster.
 * Fix: SQL optimization & memory usage huge improvement.
@@ -175,11 +217,11 @@ Quick and easy installation:
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Check the settings of WP Retina 2x in the WordPress administration screen.
 4. Check the Retina Dashboard.
-6. Read the tutorial about the plugin: <a href='http://apps.meow.fr/wp-retina-2x/tutorial/'>WP Retina 2x Tutorial</a>.
+6. Read the tutorial about the plugin: <a href='http://meowapps.com/wp-retina-2x/tutorial/'>WP Retina 2x Tutorial</a>.
 
 == Frequently Asked Questions ==
 
-Users, you will find the FAQ here: http://apps.meow.fr/wp-retina-2x/faq/.
+Users, you will find the FAQ here: http://meowapps.com/wp-retina-2x/faq/.
 
 Developers, WP Retina 2x has a little API. Here are a few filters and actions you might want to use.
 

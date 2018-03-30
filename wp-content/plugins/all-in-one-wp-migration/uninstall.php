@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2016 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,9 @@ if ( defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 	// Delete any options or other data stored in the database here
 	delete_option( AI1WM_URL_IP );
-	delete_option( AI1WM_URL_TRANSPORT );
+	delete_option( AI1WM_URL_ADAPTER );
 	delete_option( AI1WM_SECRET_KEY );
 	delete_option( AI1WM_AUTH_USER );
 	delete_option( AI1WM_AUTH_PASSWORD );
+	delete_option( AI1WM_STATUS );
 }

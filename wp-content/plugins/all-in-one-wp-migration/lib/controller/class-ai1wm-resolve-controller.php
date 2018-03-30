@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2016 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,40 +27,35 @@ class Ai1wm_Resolve_Controller {
 
 	public static function resolve( $params = array() ) {
 
-		// Set error handler
-		@set_error_handler( 'Ai1wm_Handler::error' );
-
 		// Set params
 		if ( empty( $params ) ) {
-			$params = ai1wm_urldecode( $_REQUEST );
+			$params = stripslashes_deep( $_REQUEST );
 		}
 
 		// Set secret key
 		$secret_key = null;
 		if ( isset( $params['secret_key'] ) ) {
-			$secret_key = $params['secret_key'];
+			$secret_key = trim( $params['secret_key'] );
 		}
 
-		// Verify secret key by using the value in the database, not in cache
-		if ( $secret_key !== get_option( AI1WM_SECRET_KEY ) ) {
-			Ai1wm_Status::error(
-				sprintf( __( 'Unable to authenticate your request with secret_key = "%s"', AI1WM_PLUGIN_NAME ), $secret_key ),
-				__( 'Unable to resolve', AI1WM_PLUGIN_NAME )
-			);
+		try {
+			// Ensure that unauthorized people cannot access resolve action
+			ai1wm_verify_secret_key( $secret_key );
+		} catch ( Ai1wm_Not_Valid_Secret_Key_Exception $e ) {
 			exit;
 		}
 
 		// Set IP address
-		if ( isset( $params['url_ip'] ) && ( $ip = $params['url_ip' ] ) ) {
+		if ( isset( $params['url_ip'] ) && ( $ip = $params['url_ip'] ) ) {
 			update_option( AI1WM_URL_IP, $ip );
 		}
 
-		// Set transport layer
-		if ( isset( $params['url_transport'] ) && ( $transport = $params['url_transport'] ) ) {
-			if ( $transport === 'curl' ) {
-				update_option( AI1WM_URL_TRANSPORT, array( 'curl', 'ai1wm' ) );
+		// Set adapter
+		if ( isset( $params['url_adapter'] ) && ( $adapter = $params['url_adapter'] ) ) {
+			if ( $adapter === 'curl' ) {
+				update_option( AI1WM_URL_ADAPTER, 'curl' );
 			} else {
-				update_option( AI1WM_URL_TRANSPORT, array( 'ai1wm', 'curl' ) );
+				update_option( AI1WM_URL_ADAPTER, 'stream' );
 			}
 		}
 	}

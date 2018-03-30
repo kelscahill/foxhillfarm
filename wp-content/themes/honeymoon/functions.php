@@ -31,3 +31,10 @@ if ( ( $path = parse_url( get_home_url(), PHP_URL_PATH ) ) !== null ) {
 
 remove_action( 'admin_head', 'jordy_meow_flattr', 1 );
 
+/**
+ * Proper way to enqueue scripts and styles
+ */
+function wpdocs_theme_name_scripts() {
+    wp_enqueue_style( 'style.css', get_stylesheet_uri() );
+}
+add_action( 'wp_enqueue_scripts', 'wpdocs_theme_name_scripts' );

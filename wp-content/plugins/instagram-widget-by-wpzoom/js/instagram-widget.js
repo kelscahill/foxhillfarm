@@ -31,7 +31,11 @@ jQuery(function($) {
                 }
             });
 
-            $list.find('img').width(itemWidth);
+            $list.find('a').css({
+                width: itemWidth,
+                height: itemWidth
+            });
+
             $list.removeClass('zoom-instagram-widget__items--no-js');
         });
     };

@@ -110,8 +110,8 @@
 			Modernizr.load( [ {    load: [
 				window.WpvPushMenu.jspath + 'gsap/Draggable.min.js',
 				window.WpvPushMenu.jspath + 'gsap/ThrowPropsPlugin.min.js',
-				window.WpvPushMenu.jspath + 'gsap/TweenLite.min.js',
 				window.WpvPushMenu.jspath + 'gsap/CSSPlugin.min.js',
+				window.WpvPushMenu.jspath + 'gsap/TweenLite.min.js',
 			    ],
 			    complete: function () {
 					window.GreenSockGlobals = window._gsQueue = window._gsDefine = null;
@@ -169,12 +169,15 @@
 					throwProps: true,
 					dragClickables: true,
 					onClick: function( e ) {
+						e.preventDefault();
+						e.stopPropagation();
+
 						var el = $( e.target );
+
+						console.log( e, e.target );
 
 						// back button
 						if ( el.hasClass( 'mp-back' ) ) {
-							e.preventDefault();
-							e.stopPropagation();
 
 							self.level = $(el).closest('.mp-level').data('level') - 1;
 							if(self.level === 0) {
@@ -189,10 +192,12 @@
 						// regular menu items
 						var next_level = el.find( '+ .mp-level' );
 						if( next_level.length ) {
-							e.preventDefault();
-							e.stopPropagation();
 							el.closest('.mp-level').addClass('mp-level-overlay');
-							self._openMenu( next_level );
+
+							// Chrome 55 click issue
+							setTimeout( function() {
+								self._openMenu( next_level );
+							}, 100 );
 						} else {
 							var href = el.attr( 'href' );
 
@@ -203,11 +208,15 @@
 										window.open( href );
 									} else {
 										window[target].location = href;
+
+										if ( href[0] === '#' ) {
+											self._resetMenu();
+										}
 									}
 								} catch (ex) {
 									console.log( e );
+									self._resetMenu();
 								}
-								self._resetMenu();
 							}
 						}
 					}
@@ -278,15 +287,20 @@
 
 			this.$levels.each( function( i, level ) {
 				level = $( level );
-				if( level.data('level') >= self.level + 1 ) {
+
+				if( level.data('level') > self.level ) {
+					// deeper than target level -  hide level and show level trigger
+
 					level.removeClass('mp-level-open mp-level-overlay');
+					level.prev().show();
 				} else if( Number( level.data('level') ) === self.level ) {
+					// at target level - show level and level header
+
 					level.removeClass('mp-level-overlay');
 
 					// check that the number of show/hides corresponds with the one in _closeMenu
-					self.$levels.not( level ).find( '> .mp-level-header, > div > .mp-level-header' ).hide();
+					self.$levels.not( level ).not( '[data-level="' + self.level + '"]' ).find( '> .mp-level-header, > div > .mp-level-header' ).hide();
 					level.find( '> .mp-level-header, > div > .mp-level-header' ).show();
-					level.prev().show();
 					level.find( 'li, li > a' ).show();
 				}
 			} );

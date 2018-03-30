@@ -3,7 +3,7 @@
 /*
 Plugin Name: Vamtam Push Menu
 Description: Implements the "Navigation Drawer" UI pattern from Android 4.x
-Version: 2.0.8
+Version: 2.0.12
 Author: Vamtam
 Author URI: http://vamtam.com
 */
@@ -20,7 +20,7 @@ if ( isset( $plugin ) ) {
 }
 
 $GLOBALS['WpvPushMenuPath'] = trailingslashit( plugin_dir_url($file) );
-$GLOBALS['WpvPushMenuVersion'] = '2.0.8';
+$GLOBALS['WpvPushMenuVersion'] = '2.0.12';
 
 class WpvPushMenu {
 	private $menu_name = 'wpv-push-menu';
@@ -213,6 +213,11 @@ class wpv_push_menu_item {
 		if ( ! is_array( $this->classes ) ) {
 			$this->classes = array( $this->classes );
 		}
+
+		// WPML may delete some array element, leaving a gap in the array keys
+		// this array will then be serialized as a JSON object;
+		// we need it to be an array and we don't care about the original keys
+		$this->classes = array_values( $this->classes );
 	}
 }
 

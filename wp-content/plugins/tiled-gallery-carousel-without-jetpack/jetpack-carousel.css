@@ -4,6 +4,7 @@
 
 .jp-carousel-overlay {
 	background: #000;
+	opacity: 0.98;
 }
 
 div.jp-carousel-fadeaway {
@@ -1102,3 +1103,4 @@ textarea#jp-carousel-comment-form-comment-field:focus::-webkit-input-placeholder
 		padding: 0;
 	}
 }
+

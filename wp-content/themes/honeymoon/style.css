@@ -5,8 +5,200 @@ Text Domain: honeymoon
 Description: WordPress Theme with powerful back-end framework.
 Author: Vamtam
 Author URI: http://vamtam.com
-Version: 12.3
+Version: 9.1
 License: Envato
 License URI: http://themeforest.net/licenses/regular_extended
 Tags: blue, brown, green, pink, white, light, one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, fluid-layout, custom-background, custom-colors, custom-header, custom-menu, featured-image-header, featured-images, full-width-template, post-formats, theme-options, threaded-comments, translation-ready
 */
+.single #header-sidebars,
+.archive #header-sidebars {
+	display: none;
+}
+
+#tribe-events-content table.tribe-events-calendar .type-tribe_events.tribe-event-featured,
+.tribe-events-list .tribe-events-loop .tribe-event-featured {
+	background: #7f968e;
+}
+
+.tribe-events-list .tribe-events-loop .tribe-event-featured .button {
+	border-color: white;
+}
+
+.tribe-events-list .tribe-events-loop .tribe-event-featured .button span{
+	color: white;
+}
+
+.home .wpcf7-response-output {
+  color: white;
+}
+
+.touch .header-content-wrapper {
+  background-color: #ffffff;
+}
+
+.touch .tp-caption img {
+  width: 165px!important;
+  height: 142px!important;
+}
+
+.responsive-layout #mp-menu-trigger:before {
+  color: #7f968e;
+}
+
+#blog {
+  display: none!important;
+}
+
+.zoom-instagram-widget__item:first-child {
+  margin-top: 10px!important;
+}
+
+.page-wrapper>div.right-only, .page-wrapper>article.right-only, .page-wrapper>.ajax-result>div.right-only, .page-wrapper>.ajax-result>article.right-only {
+  width: 70%;
+}
+
+.page-wrapper>aside.right, .page-wrapper>.ajax-result>aside.right {
+  width: 30%;
+}
+
+#main-menu .menu>.menu-item.current-menu-parent>a, #main-menu .menu>.menu-item.current-menu-item>a, #main-menu .menu>.menu-item.current-menu-ancestor>a, #main-menu .menu>.menu-item.current-menu-ancestor>a, #main-menu .menu>.menu-item:hover>a {}
+
+.responsive-layout .mp-level {
+  background-color: #d1cfca;
+}
+
+.logo {
+  width: 170px;
+  height: 100px!important;
+  display: block;
+  content: "";
+  margin: 15px auto;
+  text-indent: -9999px;
+}
+
+#top-nav-wrapper, .logo img, .logo-tagline {
+  display: none!important;
+}
+
+.home.page.wpv-scrolled .logo {
+  background: url('images/logo-gray-fox.svg') no-repeat center center;
+}
+
+.touch .home.page.wpv-scrolled .logo, .touch .home.page.wpv-not-scrolled .logo {
+  background: url('images/logo-gray-fox.svg') no-repeat center center;
+}
+
+.page .logo,
+.logo {
+  background: url('images/logo-gray-fox.svg') no-repeat center center;
+}
+
+.logo-tagline {
+  display: none;
+}
+
+.social-icon {
+  margin: 0 5px;
+}
+
+.social-icon:nth-child(2) {
+  margin-right: 15px;
+}
+
+#about p, #about h2 {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fox {
+  display: block;
+  margin: 0 auto;
+  width: auto;
+}
+
+.fox img {
+  width: 120px;
+  margin: 0 auto;
+}
+
+.block-weddings .icon, .block-flowers .icon {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  display: block;
+  content: "";
+}
+
+.block-weddings .icon {
+  background: url('wp-content/uploads/2016/05/icon-ring.svg') no-repeat center center;
+  text-indent: 9999px;
+}
+
+.block-flowers .icon {
+  background: url('wp-content/uploads/2016/05/icon-flowers.svg') no-repeat center center;
+  text-indent: 9999px;
+}
+
+.event-time-inner {
+  height: 110px!important;
+}
+
+.block-weddings .event-time .event-time-right {
+  padding-left: 50px;
+}
+
+.block-weddings .event-time .event-time-left {
+  padding-right: 50px;
+}
+
+svg.flower {
+  display: none;
+}
+
+.left50 {
+  width: calc(50% - 15px);
+  float: left;
+}
+
+.right50 {
+  width: calc(50% - 15px);
+  float: right;
+}
+
+input.wpcf7-submit {
+  margin: 0 auto;
+  background-color: #c29999!important;
+}
+
+.page article input, .page article textarea {
+  border: 1px solid #cccccc;
+}
+
+.page article input.wpcf7-submit {
+  margin: 0px;
+  border: 0px;
+}
+
+.home.page.wpv-not-scrolled .logo {
+  background: url('wp-content/uploads/2016/06/logo-white-fox.svg') no-repeat center center;
+}
+
+@media (max-width: 480px) {
+  .right50, .left50 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 958px) {
+  .fox, .hide {
+    display: none;
+  }
+  .home.page.wpv-not-scrolled .logo {
+    background: url('wp-content/uploads/2016/06/logo-gray-fox.svg') no-repeat center center!important;
+  }
+}

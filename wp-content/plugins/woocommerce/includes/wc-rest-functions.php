@@ -15,28 +15,47 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Parses and formats a MySQL datetime (Y-m-d H:i:s) for ISO8601/RFC3339.
+ * Parses and formats a date for ISO8601/RFC3339.
  *
- * Requered WP 4.4 or later.
+ * Required WP 4.4 or later.
  * See https://developer.wordpress.org/reference/functions/mysql_to_rfc3339/
  *
- * @since 2.6.0
- * @param string       $date
+ * @since  2.6.0
+ * @param  string|null|WC_DateTime $date
+ * @param  bool Send false to get local/offset time.
  * @return string|null ISO8601/RFC3339 formatted datetime.
  */
-function wc_rest_prepare_date_response( $date ) {
-	// Check if mysql_to_rfc3339 exists first!
-	if ( ! function_exists( 'mysql_to_rfc3339' ) ) {
+function wc_rest_prepare_date_response( $date, $utc = true ) {
+	if ( is_numeric( $date ) ) {
+		$date = new WC_DateTime( "@$date", new DateTimeZone( 'UTC' ) );
+		$date->setTimezone( new DateTimeZone( wc_timezone_string() ) );
+	} elseif ( is_string( $date ) ) {
+		$date = new WC_DateTime( $date, new DateTimeZone( 'UTC' ) );
+		$date->setTimezone( new DateTimeZone( wc_timezone_string() ) );
+	}
+
+	if ( ! is_a( $date, 'WC_DateTime' ) ) {
 		return null;
 	}
 
-	// Return null if $date is empty/zeros.
-	if ( '0000-00-00 00:00:00' === $date ) {
-		return null;
-	}
+	// Get timestamp before changing timezone to UTC.
+	return gmdate( 'Y-m-d\TH:i:s', $utc ? $date->getTimestamp() : $date->getOffsetTimestamp() );
+}
 
-	// Return the formatted datetime.
-	return mysql_to_rfc3339( $date );
+/**
+ * Returns image mime types users are allowed to upload via the API.
+ * @since  2.6.4
+ * @return array
+ */
+function wc_rest_allowed_image_mime_types() {
+	return apply_filters( 'woocommerce_rest_allowed_image_mime_types', array(
+		'jpg|jpeg|jpe' => 'image/jpeg',
+		'gif'          => 'image/gif',
+		'png'          => 'image/png',
+		'bmp'          => 'image/bmp',
+		'tiff|tif'     => 'image/tiff',
+		'ico'          => 'image/x-icon',
+	) );
 }
 
 /**
@@ -47,9 +66,8 @@ function wc_rest_prepare_date_response( $date ) {
  * @return array|WP_Error Attachment data or error message.
  */
 function wc_rest_upload_image_from_url( $image_url ) {
-	$file_name   = basename( current( explode( '?', $image_url ) ) );
-	$wp_filetype = wp_check_filetype( $file_name, null );
-	$parsed_url  = @parse_url( $image_url );
+	$file_name  = basename( current( explode( '?', $image_url ) ) );
+	$parsed_url = @parse_url( $image_url );
 
 	// Check parsed URL.
 	if ( ! $parsed_url || ! is_array( $parsed_url ) ) {
@@ -61,7 +79,7 @@ function wc_rest_upload_image_from_url( $image_url ) {
 
 	// Get the file.
 	$response = wp_safe_remote_get( $image_url, array(
-		'timeout' => 10
+		'timeout' => 10,
 	) );
 
 	if ( is_wp_error( $response ) ) {
@@ -71,6 +89,8 @@ function wc_rest_upload_image_from_url( $image_url ) {
 	}
 
 	// Ensure we have a file name and type.
+	$wp_filetype = wp_check_filetype( $file_name, wc_rest_allowed_image_mime_types() );
+
 	if ( ! $wp_filetype['type'] ) {
 		$headers = wp_remote_retrieve_headers( $response );
 		if ( isset( $headers['content-disposition'] ) && strstr( $headers['content-disposition'], 'filename=' ) ) {
@@ -81,6 +101,13 @@ function wc_rest_upload_image_from_url( $image_url ) {
 			$file_name = 'image.' . str_replace( 'image/', '', $headers['content-type'] );
 		}
 		unset( $headers );
+
+		// Recheck filetype
+		$wp_filetype = wp_check_filetype( $file_name, wc_rest_allowed_image_mime_types() );
+
+		if ( ! $wp_filetype['type'] ) {
+			return new WP_Error( 'woocommerce_rest_invalid_image_type', __( 'Invalid image type.', 'woocommerce' ), array( 'status' => 400 ) );
+		}
 	}
 
 	// Upload the file.
@@ -135,7 +162,7 @@ function wc_rest_set_uploaded_image_as_attachment( $upload, $id = 0 ) {
 		'post_mime_type' => $info['type'],
 		'guid'           => $upload['url'],
 		'post_parent'    => $id,
-		'post_title'     => $title,
+		'post_title'     => $title ? $title : basename( $upload['file'] ),
 		'post_content'   => $content,
 	);
 
@@ -191,8 +218,7 @@ function wc_rest_urlencode_rfc3986( $value ) {
 	if ( is_array( $value ) ) {
 		return array_map( 'wc_rest_urlencode_rfc3986', $value );
 	} else {
-		// Percent symbols (%) must be double-encoded.
-		return str_replace( '%', '%25', rawurlencode( rawurldecode( $value ) ) );
+		return str_replace( array( '+', '%7E' ), array( ' ', '~' ), rawurlencode( $value ) );
 	}
 }
 
@@ -282,9 +308,13 @@ function wc_rest_check_product_term_permissions( $taxonomy, $context = 'read', $
  */
 function wc_rest_check_manager_permissions( $object, $context = 'read' ) {
 	$objects = array(
-		'reports'    => 'view_woocommerce_reports',
-		'settings'   => 'manage_woocommerce',
-		'attributes' => 'manage_product_terms',
+		'reports'          => 'view_woocommerce_reports',
+		'settings'         => 'manage_woocommerce',
+		'system_status'    => 'manage_woocommerce',
+		'attributes'       => 'manage_product_terms',
+		'shipping_methods' => 'manage_woocommerce',
+		'payment_gateways' => 'manage_woocommerce',
+		'webhooks'         => 'manage_woocommerce',
 	);
 
 	$permission = current_user_can( $objects[ $object ] );

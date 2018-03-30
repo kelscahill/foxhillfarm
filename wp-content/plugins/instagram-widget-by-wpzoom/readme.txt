@@ -1,9 +1,9 @@
 === Instagram Widget by WPZOOM ===
 Contributors: WPZOOM, nvartolomei, ciorici
-Donate link: http://www.wpzoom.com/
+Donate link: https://www.wpzoom.com/
 Tags: instagram, widget, timeline, social networks, latest images, feed
 Requires at least: 4.3
-Tested up to: 4.5.2
+Tested up to: 4.9
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,22 +12,38 @@ Fully customisable and responsive Instagram timeline widget for WordPress.
 
 == Description ==
 
+**[View Demo](http://demo.wpzoom.com/instagram-widget/)**
+
+
 > Did you find this plugin helpful? Please consider [leaving a 5-star review](https://wordpress.org/support/view/plugin-reviews/instagram-widget-by-wpzoom).
 
 
-Instagram Widget by WPZOOM gives you a WordPress Widget that you can place anywhere you want and be able to fully customize it's design using CSS.
+**Instagram Widget by WPZOOM** gives you a WordPress Widget that you can place anywhere you want and be able to fully customize it's design using CSS.
+
+= Where I can view a Demo? =
+
+You can view the widget live in all our themes at [WPZOOM](http://www.wpzoom.com/themes/).
 
 
 = Get Involved =
 
 Looking to contribute code to this plugin? Go ahead and [fork the repository over at GitHub](https://github.com/wpzoom/instagram-widget/).
 
+== Installation ==
+
+Simply search for the plugin via the **Plugins -> Add New** dialog and click install, or download and extract the plugin, and copy the plugin folder into your wp-content/plugins directory and activate.
+
+After installation go to the **Settings > Instagram Widget** page and connect the plugin with your Instagram account.
+
+Once connected, go to the **Widgets** page and add the widget **Instagram Widget by WPZOOM** to a widget area like Sidebar.
+
+
 
 == Frequently Asked Questions ==
 
 = I just installed plugin and widget shows nothing =
 
-Make sure to connect your Instagram account with the plugin. You can do that in the Settings > Instagram Widget page from the Dashboard.
+Make sure to connect your Instagram account with the plugin. You can do that in the **Settings > Instagram Widget** page from the Dashboard.
 
 
 == Screenshots ==
@@ -36,6 +52,25 @@ Make sure to connect your Instagram account with the plugin. You can do that in 
 
 
 == Changelog ==
+
+= 1.2.5 =
+* Minor bug fix
+
+= 1.2.4 =
+* Minor bug fix with missing images
+
+= 1.2.3 =
+* Minor bug fix
+
+= 1.2.2 =
+* Bug fix with incorrect thumbnail size on non-square images
+
+= 1.2.1 =
+* Minor modification to show Alt text when hovering images
+
+= 1.2.0 =
+* Updated "View on Instagram" button
+* Support for WordPress 4.6
 
 = 1.1.0 =
 * IMPORTANT: Due to the recent Instagram API changes, in order for the Instagram Feed plugin to continue working after June 1st you must obtain a new Access Token by using the Instagram button on the plugin's Settings page. This is true even if you recently already obtained a new token. Apologies for any inconvenience.

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014-2016 ServMask Inc.
+ * Copyright (C) 2014-2018 ServMask Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ class Ai1wm_Compatibility {
 		$extensions = Ai1wm_Extensions::get();
 
 		foreach ( $extensions as $extension_name => $extension_data ) {
-			if ( ! isset( $params[$extension_data['short']] ) ) {
-				unset( $extensions[$extension_name] );
+			if ( ! isset( $params[ $extension_data['short'] ] ) ) {
+				unset( $extensions[ $extension_name ] );
 			}
 		}
 

@@ -22,10 +22,10 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 		);
 
 		$this->defaults = array(
-			'title'                           => esc_html__( 'Instagram', 'wpzoom-instagram-widget' ),
+            'title'                           => esc_html__( 'Instagram', 'wpzoom-instagram-widget' ),
+			'button_text'                     => esc_html__( 'View on Instagram', 'wpzoom-instagram-widget' ),
 			'image-limit'                     => 9,
 			'show-view-on-instagram-button'   => true,
-			'center-view-on-instagram-button' => true,
 			'images-per-row'                  => 3,
 			'image-width'                     => 120,
 			'image-spacing'                   => 10
@@ -106,7 +106,8 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 	 * @return array Updated safe values to be saved.
 	 */
 	public function update( $new_instance, $old_instance ) {
-		$instance['title'] = sanitize_text_field( $new_instance['title'] );
+        $instance['title'] = sanitize_text_field( $new_instance['title'] );
+		$instance['button_text'] = sanitize_text_field( $new_instance['button_text'] );
 
 		$instance['image-limit'] = ( 0 !== (int) $new_instance['image-limit'] ) ? (int) $new_instance['image-limit'] : null;
 
@@ -115,7 +116,6 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 		$instance['image-spacing'] = ( 0 <= (int) $new_instance['image-spacing'] ) ? (int) $new_instance['image-spacing'] : null;
 
 		$instance['show-view-on-instagram-button']   = (bool) $new_instance['show-view-on-instagram-button'];
-		$instance['center-view-on-instagram-button'] = (bool) $new_instance['center-view-on-instagram-button'];
 
 
 		return $instance;
@@ -163,7 +163,7 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 
 		<p>
 			<label for="<?php echo $this->get_field_id( 'image-width' ); ?>"><?php esc_html_e( 'Desired Image width in pixels:', 'wpzoom-instagram-widget' ); ?> <small>(Just integer)</small></label>
-			<input class="widefat" id="<?php echo $this->get_field_id( 'image-width' ); ?>" name="<?php echo $this->get_field_name( 'image-width' ); ?>" type="number" min="20" max="300" value="<?php echo esc_attr( $instance['image-width'] ); ?>"/>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'image-width' ); ?>" name="<?php echo $this->get_field_name( 'image-width' ); ?>" type="number" min="20" value="<?php echo esc_attr( $instance['image-width'] ); ?>"/>
 		</p>
 
 		<p>
@@ -183,13 +183,15 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 
 		<p>
 			<input class="checkbox" type="checkbox" <?php checked( $instance['show-view-on-instagram-button'] ); ?> id="<?php echo $this->get_field_id( 'show-view-on-instagram-button' ); ?>" name="<?php echo $this->get_field_name( 'show-view-on-instagram-button' ); ?>" />
-			<label for="<?php echo $this->get_field_id( 'show-view-on-instagram-button' ); ?>"><?php _e(' Display View on Instagram button', 'wpzoom-instagram-widget' ); ?></label>
+			<label for="<?php echo $this->get_field_id( 'show-view-on-instagram-button' ); ?>"><?php _e(' Display <strong>View on Instagram</strong> button', 'wpzoom-instagram-widget' ); ?></label>
 		</p>
 
-		<p>
-			<input class="checkbox" type="checkbox" <?php checked( $instance['center-view-on-instagram-button'] ); ?> id="<?php echo $this->get_field_id( 'center-view-on-instagram-button' ); ?>" name="<?php echo $this->get_field_name( 'center-view-on-instagram-button' ); ?>" />
-			<label for="<?php echo $this->get_field_id( 'center-view-on-instagram-button' ); ?>"><?php _e(' Center View on Instagram button', 'wpzoom-instagram-widget' ); ?></label>
-		</p>
+        <p>
+            <label for="<?php echo $this->get_field_id( 'button_text' ); ?>"><?php esc_html_e( 'Button Text:', 'wpzoom-instagram-widget' ); ?></label>
+            <input class="widefat" id="<?php echo $this->get_field_id( 'button_text' ); ?>" name="<?php echo $this->get_field_name( 'button_text' ); ?>" type="text" value="<?php echo esc_attr( $instance['button_text'] ); ?>"/>
+        </p>
+
+
 
 	<?php
 	}
@@ -205,14 +207,21 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 			<?php foreach ( $items as $item ) : ?>
 				<?php
 				$link = $item['link'];
-				$src = $item['image-url'];
+                $src = $item['image-url'];
+				$alt = esc_attr($item['image-caption']);
 				?>
 
-				<li class="zoom-instagram-widget__item">
-					<a href="<?php echo $link; ?>" target="_blank">
-						<img src="<?php echo $src; ?>" alt="">
-					</a>
-				</li>
+                <li class="zoom-instagram-widget__item" >
+                    <a style="width:<?php echo esc_attr( $instance['image-width'] ); ?>px;
+                        height: <?php echo esc_attr( $instance['image-width'] ); ?>px;
+                        background-image: url('<?php echo $src; ?>');
+                        display: block;
+                        background-size: cover;
+                        background-position: center center;
+                        background-repeat: no-repeat;"
+                        href="<?php echo $link; ?>" target="_blank" title="<?php echo $alt; ?>">
+                    </a>
+                </li>
 
 				<?php if ( ++$count === $instance['image-limit'] ) break; ?>
 
@@ -226,15 +235,14 @@ class Wpzoom_Instagram_Widget extends WP_Widget {
 
 	protected function display_instagram_button( $instance, $username) {
 		$show_view_on_instagram_button   = $instance['show-view-on-instagram-button'];
-		$center_view_on_instagram_button = $instance['center-view-on-instagram-button'];
 
 		if ( ! $show_view_on_instagram_button ) {
 			return;
 		}
 
 		?>
-		<div class="zoom-instagram-widget__follow-me <?php echo ($center_view_on_instagram_button ? 'zoom-instagram-widget__follow-me--center' : ''); ?>">
-			<a href="<?php printf( 'http://instagram.com/%s?ref=badge', esc_attr( $username ) ); ?>" class="ig-b- ig-b-v-24" target="_blank"><img src="//badges.instagram.com/static/images/ig-badge-view-24.png" alt="Instagram" /></a>
+		<div class="zoom-instagram-widget__follow-me">
+			<a href="<?php printf( 'http://instagram.com/%s?ref=badge', esc_attr( $username ) ); ?>" class="ig-b- ig-b-v-24" target="_blank"><?php echo esc_attr( $instance['button_text'] ); ?></a>
 		</div>
 	<?php
 	}
