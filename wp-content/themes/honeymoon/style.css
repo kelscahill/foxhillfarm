@@ -10,14 +10,28 @@ License: Envato
 License URI: http://themeforest.net/licenses/regular_extended
 Tags: blue, brown, green, pink, white, light, one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, fluid-layout, custom-background, custom-colors, custom-header, custom-menu, featured-image-header, featured-images, full-width-template, post-formats, theme-options, threaded-comments, translation-ready
 */
+html {
+	background-color: white;
+}
 .single #header-sidebars,
 .archive #header-sidebars {
 	display: none;
 }
-
-#tribe-events-content table.tribe-events-calendar .type-tribe_events.tribe-event-featured,
+.tribe-events-day {
+	padding: 0;
+}
+.tribe-events-page-title {
+	display: none;
+}
+.events-list .tribe-events-loop .wpv-tribe-events-block, .tribe-events-day .tribe-events-loop .wpv-tribe-events-block, .single-tribe_venue .tribe-events-loop .wpv-tribe-events-block, .single-tribe_organizer .tribe-events-loop .wpv-tribe-events-block {
+	background-color: #f5f5f5 !important;
+}
+.tribe-events-list .tribe-events-loop .tribe-event-featured,
+.tribe-events-list #tribe-events-day.tribe-events-loop .tribe-event-featured,
+.type-tribe_events.tribe-events-photo-event.tribe-event-featured .tribe-events-photo-event-wrap,
+.type-tribe_events.tribe-events-photo-event.tribe-event-featured .tribe-events-photo-event-wrap:hover,
 .tribe-events-list .tribe-events-loop .tribe-event-featured {
-	background: #7f968e;
+	background: #7f968e !important;
 }
 
 .tribe-events-list .tribe-events-loop .tribe-event-featured .button {

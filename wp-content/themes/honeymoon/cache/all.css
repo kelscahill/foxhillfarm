@@ -3959,7 +3959,7 @@ html {
   background-repeat: repeat;
   background-position: center top;
   background-attachment: fixed;
-  background-color: #FEEFE3;
+  background-color: #ffffff;
   -webkit-background-size: auto;
   -moz-background-size: auto;
   background-size: auto;
@@ -13182,8 +13182,8 @@ cite {
   .responsive-layout.single-tribe_venue .tribe-events-loop .type-tribe_events,
   .responsive-layout.single-tribe_organizer .tribe-events-loop .type-tribe_events {
     float: none;
-    padding-right: 0;
-    padding-left: 0;
+    padding-right: 0px;
+    padding-left: 0px;
     width: auto;
   }
   .responsive-layout #tribe-bar-form .first-row {
